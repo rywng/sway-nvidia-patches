@@ -1,0 +1,35 @@
+diff --git a/examples/dmabuf-capture.c b/examples/dmabuf-capture.c
+index 58bf641..65ca3f4 100644
+--- a/examples/dmabuf-capture.c
++++ b/examples/dmabuf-capture.c
+@@ -520,8 +520,15 @@ static void *vid_encode_thread(void *arg) {
+ 			}
+ 		};
+ 
+-		av_log(ctx, AV_LOG_INFO, "Encoded frame %i (%i in queue)\n",
+-				ctx->avctx->frame_number, get_fifo_size(&ctx->vid_frames));
++		int64_t frame_num;
++
++#if LIBAVUTIL_VERSION_MAJOR >= 58
++		frame_num = ctx->avctx->frame_num;
++#else
++		frame_num = ctx->avctx->frame_number;
++#endif
++		av_log(ctx, AV_LOG_INFO, "Encoded frame %"PRIi64" (%i in queue)\n",
++				frame_num, get_fifo_size(&ctx->vid_frames));
+ 
+ 	} while (!ctx->err);
+ 
+diff --git a/render/gles2/renderer.c b/render/gles2/renderer.c
+index 8d06015..a9fce8d 100644
+--- a/render/gles2/renderer.c
++++ b/render/gles2/renderer.c
+@@ -165,7 +165,7 @@ static bool gles2_bind_buffer(struct wlr_renderer *wlr_renderer,
+ 		assert(wlr_egl_is_current(renderer->egl));
+ 
+ 		push_gles2_debug(renderer);
+-		glFlush();
++		glFinish();
+ 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+ 		pop_gles2_debug(renderer);
+ 

@@ -1,0 +1,13 @@
+diff --git a/render/gles2/pass.c b/render/gles2/pass.c
+index 768e81d..38e5a98 100644
+--- a/render/gles2/pass.c
++++ b/render/gles2/pass.c
+@@ -36,7 +36,7 @@ static bool render_pass_submit(struct wlr_render_pass *wlr_pass) {
+ 		clock_gettime(CLOCK_MONOTONIC, &timer->cpu_end);
+ 	}
+ 
+-	glFlush();
++	glFinish();
+ 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+ 
+ 	pop_gles2_debug(renderer);
